@@ -19,8 +19,10 @@ export const firebaseConfigError =
     ? `Firebase configuration is missing: ${missingConfig.join(", ")}. Set the VITE_FIREBASE_* variables in Vercel project settings.`
     : "";
 
+export const firebaseConfigured = missingConfig.length === 0;
+
 const firebaseApp =
-  missingConfig.length === 0
+  firebaseConfigured
     ? getApps().length
       ? getApps()[0]
       : initializeApp(requiredConfig)

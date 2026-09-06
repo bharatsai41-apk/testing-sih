@@ -17,6 +17,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { firebaseConfigured } from "../firebase";
 
 const firebaseMessage = (error) => {
   if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found") {
@@ -30,7 +31,7 @@ const firebaseMessage = (error) => {
 };
 
 const LoginPage = () => {
-  const { signIn, signUp, resetPassword, signInWithGoogle } = useAuth();
+  const { signIn, signUp, resetPassword, signInWithGoogle, signInAsDemo } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -80,6 +81,20 @@ const LoginPage = () => {
       navigate(destination, { replace: true });
     } catch (googleError) {
       setError(firebaseMessage(googleError));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDemoSignIn = async () => {
+    setError("");
+    setSuccess("");
+    setSubmitting(true);
+    try {
+      await signInAsDemo();
+      navigate(destination, { replace: true });
+    } catch (demoError) {
+      setError(firebaseMessage(demoError));
     } finally {
       setSubmitting(false);
     }
@@ -150,6 +165,13 @@ const LoginPage = () => {
               </p>
             </div>
 
+            {!firebaseConfigured && (
+              <div className="mb-5 rounded-xl border border-[#F1C40F]/40 bg-[#FFF9E6] dark:bg-[#332B12] p-3 text-xs text-[#8A6700] dark:text-[#F6D365]">
+                Firebase is not configured for this deployment. Use demo access below, or add the six{" "}
+                <code className="font-bold">VITE_FIREBASE_*</code> variables in Vercel to enable account sign-in.
+              </div>
+            )}
+
             {/* Segmented Sign In / Register Tabs (Hidden in reset mode) */}
             {mode !== "reset" && (
               <div className="flex p-1 bg-[#F4F7FB] dark:bg-[#090D16] rounded-xl border border-[#D8E6F3] dark:border-[#1E293B] mb-5">
@@ -192,7 +214,7 @@ const LoginPage = () => {
                 <button
                   type="button"
                   onClick={handleGoogleSignIn}
-                  disabled={submitting}
+                  disabled={submitting || !firebaseConfigured}
                   className="w-full py-2.5 px-4 rounded-xl bg-white dark:bg-[#101726] border border-[#D8E6F3] dark:border-[#1E293B] hover:bg-[#F8FBFE] dark:hover:bg-[#18233A] text-xs font-bold text-[#1B2942] dark:text-white flex items-center justify-center gap-3 transition shadow-xs hover:shadow cursor-pointer disabled:opacity-60"
                 >
                   <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
@@ -330,7 +352,7 @@ const LoginPage = () => {
               {/* Submit CTA Button */}
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || !firebaseConfigured}
                 className="w-full rounded-xl bg-gradient-to-r from-[#2980B9] to-[#3498DB] hover:from-[#2471A3] hover:to-[#2E86C1] py-3 font-bold text-white transition-all shadow-md shadow-[#3498DB]/25 hover:shadow-lg hover:shadow-[#3498DB]/35 flex items-center justify-center gap-2 text-xs cursor-pointer disabled:opacity-60 active:scale-[0.99] mt-2"
               >
                 {submitting ? (
@@ -350,6 +372,17 @@ const LoginPage = () => {
                 )}
               </button>
             </form>
+
+            {!firebaseConfigured && mode === "signin" && (
+              <button
+                type="button"
+                onClick={handleDemoSignIn}
+                disabled={submitting}
+                className="w-full mt-3 rounded-xl border border-[#27AE60]/40 bg-[#EAFAF1] dark:bg-[#132B20] py-3 font-bold text-[#218C4A] dark:text-[#52E38A] transition-all hover:bg-[#DDF5E7] dark:hover:bg-[#183B29] disabled:opacity-60"
+              >
+                {submitting ? "Opening demo session?" : "Continue with Demo Access"}
+              </button>
+            )}
 
             {/* Mode switch helper / Back to sign in */}
             <div className="mt-5 text-center">
