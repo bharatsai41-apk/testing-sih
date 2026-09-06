@@ -88,10 +88,13 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
         sa.Column("mining_zone_id", sa.Integer(), sa.ForeignKey("mining_zones.id"), nullable=True),
         sa.Column("predicted_production", sa.Float(), nullable=True),
+        sa.Column("planned_production", sa.Float(), nullable=True),
         sa.Column("shortfall_risk", sa.String(50), nullable=True),
         sa.Column("expected_shortfall", sa.Float(), nullable=True),
+        sa.Column("shortfall_percentage", sa.Float(), nullable=True),
         sa.Column("confidence", sa.Float(), nullable=True),
         sa.Column("prediction_year", sa.Integer(), nullable=True),
+        sa.Column("recommended_action", sa.String(255), nullable=True),
         sa.Column("created_at", sa.DateTime(), server_default=sa.func.now(), nullable=False),
     )
     op.create_index("ix_production_predictions_id", "production_predictions", ["id"])

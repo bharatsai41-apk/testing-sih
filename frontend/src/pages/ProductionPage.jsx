@@ -168,7 +168,7 @@ export const ProductionPage = () => {
             {forecastData?.isMock === false ? (
               <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 flex items-center gap-1 shadow-xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live Random Forest Model
+                Live MANGANAI ExtraTrees Model
               </span>
             ) : (
               <span className="text-[10px] uppercase font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">
@@ -191,7 +191,7 @@ export const ProductionPage = () => {
           <div>
             <h3 className="text-sm font-bold text-[#1B2942]">ML Production Simulation Parameters</h3>
             <p className="text-[11px] text-[#606F81] mt-0.5">
-              11 operational and weather variables scored in real time by the trained Random Forest regressor (200 trees).
+              11 operational and weather variables scored in real time by the trained FINAL ExtraTrees production model (trained 2022-2023, tested 2024, MAE: 8,079 tonnes, R²: 0.8818).
             </p>
           </div>
           <div className="flex items-center gap-3">

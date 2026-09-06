@@ -130,13 +130,13 @@ _ml_interface_instance: Optional[MLPredictionInterface] = None
 
 
 def _create_ml_interface() -> MLPredictionInterface:
-    """Create the ML interface — real model loader or placeholder fallback."""
+    """Create the ML interface — FINAL ExtraTrees model or fallback."""
     try:
-        from app.services.ml_model_loader import ProductionMLInterface
+        from app.services.ml_model_loader_final import FinalProductionMLInterface
         from app.config import get_settings
 
         settings = get_settings()
-        interface = ProductionMLInterface(model_dir=settings.ML_MODEL_DIR)
+        interface = FinalProductionMLInterface(model_dir=settings.ML_MODEL_DIR)
         return interface
     except Exception as exc:
         logger.exception("Falling back to placeholder ML interface: %s", exc)

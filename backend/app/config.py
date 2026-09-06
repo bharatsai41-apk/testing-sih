@@ -8,12 +8,20 @@ from pydantic_settings import BaseSettings
 import os
 
 _possible_dirs = [
-    Path(__file__).resolve().parents[2] / "ml" / "model",
+    # Direct path from backend app (most common)
     Path(__file__).resolve().parents[1] / "ml" / "model",
+    # From repo root
+    Path(__file__).resolve().parents[2] / "backend" / "ml" / "model",
+    # Lambda or other serverless
     Path(os.environ.get("LAMBDA_TASK_ROOT", "/var/task")) / "ml" / "model",
     Path(os.environ.get("LAMBDA_TASK_ROOT", "/var/task")) / "backend" / "ml" / "model",
 ]
-_REPO_ML_MODEL_DIR = str(next((d for d in _possible_dirs if (d / "production_model.pkl").exists()), _possible_dirs[0]))
+
+# Find directory with ExtraTrees model, fall back to production model
+_REPO_ML_MODEL_DIR = str(next(
+    (d for d in _possible_dirs if (d / "extra_trees_model.joblib").exists() or (d / "production_model.pkl").exists()), 
+    _possible_dirs[0]
+))
 
 
 class Settings(BaseSettings):
